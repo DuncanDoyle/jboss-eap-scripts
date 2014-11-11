@@ -1,0 +1,34 @@
+#
+# Reconfigures the JGroups UDP stack to use AUTH and ENCRYPT.
+#
+# author: ddoyle@redhat.com
+#
+batch
+/subsystem=jgroups/stack=udp:remove
+
+/subsystem=jgroups/stack=udp:add(transport={"type"=>"UDP","socket-binding"=>"jgroups-udp"})
+/subsystem=jgroups/stack=udp:add-protocol(type=PING)
+/subsystem=jgroups/stack=udp:add-protocol(type=MERGE3)
+/subsystem=jgroups/stack=udp:add-protocol(type=FD_SOCK)
+/subsystem=jgroups/stack=udp/protocol=FD_SOCK:write-attribute(name=socket-binding,value=jgroups-udp-fd)
+/subsystem=jgroups/stack=udp:add-protocol(type=FD)
+/subsystem=jgroups/stack=udp:add-protocol(type=VERIFY_SUSPECT)
+#Configure the encryption protocol.
+/subsystem=jgroups/stack=udp:add-protocol(type=ENCRYPT)
+/subsystem=jgroups/stack=udp/protocol=ENCRYPT/property=key_store_name:add(value="${jboss.server.config.dir}/jgroups.keystore")
+/subsystem=jgroups/stack=udp/protocol=ENCRYPT/property=store_password:add(value="jgroups_pass@01")
+/subsystem=jgroups/stack=udp/protocol=ENCRYPT/property=alias:add(value="jgroupsKey")
+/subsystem=jgroups/stack=udp:add-protocol(type=pbcast.NAKACK)
+/subsystem=jgroups/stack=udp:add-protocol(type=UNICAST2)
+/subsystem=jgroups/stack=udp:add-protocol(type=pbcast.STABLE)
+#Configure the authentication protocol.
+/subsystem=jgroups/stack=udp:add-protocol(type=AUTH)
+#Using the SimpleToken implementation. See http://www.jgroups.org/javadoc/org/jgroups/auth/AuthToken.html for other (more complex) implementations.
+/subsystem=jgroups/stack=udp/protocol=AUTH/property=auth_class:add(value=org.jgroups.auth.SimpleToken)
+/subsystem=jgroups/stack=udp/protocol=AUTH/property=auth_value:add(value="MySecretValue")
+/subsystem=jgroups/stack=udp:add-protocol(type=pbcast.GMS)
+/subsystem=jgroups/stack=udp:add-protocol(type=UFC)
+/subsystem=jgroups/stack=udp:add-protocol(type=MFC)
+/subsystem=jgroups/stack=udp:add-protocol(type=FRAG2)
+/subsystem=jgroups/stack=udp:add-protocol(type=RSVP)
+run-batch

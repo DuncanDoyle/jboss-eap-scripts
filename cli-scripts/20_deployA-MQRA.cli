@@ -1,0 +1,33 @@
+#
+# Deploys the JBoss A-MQ RAR to JBoss EAP.
+#
+# author: ddoyle@redhat.com
+#
+batch
+/subsystem=resource-adapters/resource-adapter=activemq-rar.rar:add(archive="activemq-rar.rar", transaction-support=XATransaction)
+
+/subsystem=resource-adapters/resource-adapter=activemq-rar.rar/config-properties=UserName:add(value=defaultUser)
+/subsystem=resource-adapters/resource-adapter=activemq-rar.rar/config-properties=Password:add(value=defaultPassword)
+/subsystem=resource-adapters/resource-adapter=activemq-rar.rar/config-properties=ServerUrl:add(value="tcp://localhost:61616?jms.rmIdFromConnectionId=true")
+#/subsystem=resource-adapaters/resource-adapter=activemq-rar.rar/config-properties=ServerUrl:add(value="${jboss.amq.serverurl})
+
+#Required for Master/Slave failover
+#/subsystem=resource-adapaters/resource-adapter=activemq-rar.rar/config-properties=UseInboundSession:add(value="true")
+
+/subsystem=resource-adapters/resource-adapter=activemq-rar.rar/connection-definitions=ConnectionFactory:add(class-name="org.apache.activemq.ra.ActiveMCManagedConnectionFactory", jndi-name="java:/ConnectionFactory", enabled=true, min-pool-size=1, max-pool-size=20, pool-prefill=false, same-rm-override=false, recovery-username=defaultUser, recovery-password=defaultPassword)
+
+# Required for master-slave failover
+#/subsystem=resource-adapters/resource-adapter=activemq-rar.rar/connection-definitions/ConnectionFactory/config-properties=UseInboundSession:add(value=false)
+
+# Deploy sample Queue and Topic JCA Admin Objects
+/subsystem=resource-adapters/resource-adapter=activemq-rar.rar/admin-objects=HELLOWORLDQueue:add(class-name="org.apache.activemq.command.ActiveMQQueue", jndi-name="java:/queue/HELLOWORLDQueue", use-java-context=true)
+/subsystem=resource-adapters/resource-adapter=activemq-rar.rar/admin-objects=HELLOWORLDQueue/config-properties=PhysicalName:add(value=HELLOWORLDQueue)
+
+/subsystem=resource-adapters/resource-adapter=activemq-rar.rar/admin-objects=HELLOWORLDTopic:add(class-name="org.apache.activemq.command.ActiveMQTopic", jndi-name="java:/queue/HELLOWORLDTopic", use-java-context=true)
+/subsystem=resource-adapters/resource-adapter=activemq-rar.rar/admin-objects=HELLOWORLDTopic/config-properties=PhysicalName:add(value=HELLOWORLDTopic)
+
+# Configure the default MDB RAR and MDB pool.
+/subsystem=ejb3:write-attribute(name=default-resource-adapter-name, value=activemq-rar.rar)
+/subsystem=ejb3:write-attribute(name=default-mdb-instance-pool, value=mdb-strict-max-pool)
+
+run-batch
