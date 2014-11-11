@@ -14,7 +14,7 @@ batch
 #Required for Master/Slave failover
 #/subsystem=resource-adapaters/resource-adapter=activemq-rar.rar/config-properties=UseInboundSession:add(value="true")
 
-/subsystem=resource-adapters/resource-adapter=activemq-rar.rar/connection-definitions=ConnectionFactory:add(class-name="org.apache.activemq.ra.ActiveMCManagedConnectionFactory", jndi-name="java:/ConnectionFactory", enabled=true, min-pool-size=1, max-pool-size=20, pool-prefill=false, same-rm-override=false, recovery-username=defaultUser, recovery-password=defaultPassword)
+/subsystem=resource-adapters/resource-adapter=activemq-rar.rar/connection-definitions=ConnectionFactory:add(class-name="org.apache.activemq.ra.ActiveMQManagedConnectionFactory", jndi-name="java:/ConnectionFactory", enabled=true, min-pool-size=1, max-pool-size=20, pool-prefill=false, same-rm-override=false, recovery-username=defaultUser, recovery-password=defaultPassword)
 
 # Required for master-slave failover
 #/subsystem=resource-adapters/resource-adapter=activemq-rar.rar/connection-definitions/ConnectionFactory/config-properties=UseInboundSession:add(value=false)
