@@ -29,7 +29,28 @@ The script accepts 2 parameters:
 - -j: The installation directory of JBoss EAP 6, e.g. */opt/jboss/jboss-eap-6.3/*
 - -p: The patch file that should be applied.
 
+install-spring-module/install-spring-module.sh
+-----------------------------------------------
+Script that installs a Spring module (in a separare *spring* layer) into a JBoss EAP 6 installation.
+Note that the script isn't very flexible atm. It uses the 'pom.xml' in the root directory to determine the module resources, which it downloads via Maven.
+Also, the name of the layer and module is not configurable and it uses a default *module.xml.template* file as the template for the actual *module.xml*.
+Third, if you want to use this script when creating a Docker container, the Docker container requires a Maven installation and Internet access (or at least access to a Maven repository).
+
+The idea is to split this script into 2 scripts, one that creates the module and packages it in *module-{modulename}.zip*, and one that actually installs the module onto JBoss EAP 6.
+
+This script accepts 4 parameters:
+- -j: The installation directory of JBoss EAP 6, e.g. */opt/jboss/jboss-eap-6.3/*
+- -l: The name of the layer in which the module should be installed.
+- -e: The *enabled* boolean which defines whether the (new) layer should be enabled or not in the platforms *layers.conf* configuration file.
 
 createJGroupsKeystore.sh
+------------------------
+Simple *keytool* command that creates a keystore for the JGroups ENCRYPT protocol (see the 09\_configureJGroups.cli script).
+
+cli-scripts
 -----------------------
+Directory that contains a number of common CLI scripts that I've been using.
+
+
+
 
