@@ -57,6 +57,16 @@ This script accepts 5 parameters:
 - -s: The module's slot. The default value is *main*.
 - -o: The output ZIP file. The default value is *module.zip*.
 
+install-jboss-module.sh
+-----------------------------------------------
+Installs a JBoss Module, defined in a ZIP file, to a JBoss EAP 6 installation. Creates and enables the defined module layer in the JBoss EAP 6 configuration.
+
+This script accepts 4 parameters:
+- -m: The module to install. The module has to be defined in a ZIP file. For example a module that has been built with the *build-jboss-module.sh* script.
+- -j: The installation directory of JBoss EAP 6, e.g. */opt/jboss/jboss-eap-6.3/*
+- -l: The name of the layer in which the module should be installed.
+- -e: The *enabled* boolean which defines whether the (new) layer should be enabled or not in the platforms *layers.conf* configuration file.
+
 createJGroupsKeystore.sh
 ------------------------
 Simple *keytool* command that creates a keystore for the JGroups ENCRYPT protocol (see the 09\_configureJGroups.cli script).
