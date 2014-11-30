@@ -50,12 +50,15 @@ The module is created as a ZIP file, and by default stored as *module.zip* (howe
 
 ATM, the module-dependencies of the module are not yet configurable, they're statically defined in the module.xml.template file (this will be addressed in a future version).
 
-This script accepts 5 parameters:
+This script accepts 6 parameters:
 - -f: The Maven POM file that defines the resources.
 - -p: The module path (e.g. *org.spring*). This defines the module's directory structure.
 - -n: The name of the module. This is used in the *<module>* element of the *module.xml* file.
 - -s: The module's slot. The default value is *main*.
+- -d: Comma separated list of the module's dependencies.
 - -o: The output ZIP file. The default value is *module.zip*.
+
+Example: ./build-jboss-module.sh -f ../install-spring-module/pom.xml -p org/spring -n org.springframework.spring -d javax.api,org.apache.commons.logging
 
 install-jboss-module.sh
 -----------------------------------------------

@@ -5,7 +5,7 @@
 
 	author: ddoyle@redhat.com
 -->
-<xsl:stylesheet xmlns="urn:jboss:module:1.1" xmlns:jbm="urn:jboss:module:1.1" xmlns:res="urn:jboss:ddoyle:resources:1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:str="http://exslt.org/strings" extension-element-prefixes="str" exclude-result-prefixes="jbm" version="1.0">
+<xsl:stylesheet xmlns="urn:jboss:module:1.1" xmlns:jbm="urn:jboss:module:1.1" xmlns:res="urn:jboss:ddoyle:resources:1.0" xmlns:dep="urn:jboss:ddoyle:dependencies:1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:str="http://exslt.org/strings" extension-element-prefixes="str" exclude-result-prefixes="jbm" version="1.0">
 
    
    <xsl:param name="moduleName" select="'default.name'"/>
@@ -14,14 +14,14 @@
 
    <!-- load the resources (filenames) from the resources.xml file. -->
    <xsl:variable name="resources" select="document('resources.xml')"/>
+   <xsl:variable name="dependencies" select="document('dependencies.xml')"/>
 
    <xsl:template match="/jbm:module">
 	<xsl:copy>
 		<xsl:attribute name="name">
 			<xsl:value-of select="$moduleName"/>
 		</xsl:attribute>
-		<xsl:apply-templates />
-		
+		<xsl:apply-templates />		
 	</xsl:copy>
    </xsl:template>
 
@@ -37,6 +37,21 @@
          </xsl:for-each>
       </xsl:copy>
    </xsl:template>
+
+   <xsl:template match="jbm:dependencies">
+      <xsl:copy>
+         <xsl:for-each select="$dependencies/dep:dependencies/dep:module">
+	   <module>
+	      <xsl:attribute name="name">
+	         <xsl:value-of select="@name"/>
+	      </xsl:attribute>
+           </module>
+         </xsl:for-each>
+      </xsl:copy>
+   </xsl:template>
+
+
+
 
    <!-- Copy everything that doesn't match. -->
    <xsl:template match="@*|node()">

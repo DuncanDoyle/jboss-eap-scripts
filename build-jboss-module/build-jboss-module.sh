@@ -18,12 +18,13 @@ function usage {
       echo "    -p              The modules path."
       echo "    -n              Name of the module."
       echo "    -s              Slot of the module."
+      echo "    -d              Comma delimeted string of module dependencies."
       echo "    -o              Name of the output ZIP file in which to store the module."
       echo "    -h              Display help information."
 }
 
 #Parse the params
-while getopts ":f:p:n:s::oh" opt; do
+while getopts ":f:p:n:s:d:o:h" opt; do
   case $opt in
     f)
       POM_FILE=$OPTARG
@@ -36,6 +37,9 @@ while getopts ":f:p:n:s::oh" opt; do
       ;;
     s)
       MODULE_SLOT=$OPTARG
+      ;;
+    d)
+      MODULE_DEPENDENCIES=$OPTARG
       ;;
     o)
       OUTPUT_FILE=$OPTARG
@@ -80,6 +84,11 @@ if [ -z "$MODULE_SLOT" ]
 then
         MODULE_SLOT=main
 fi
+
+#if [ -z "$MODULE_DEPENDENCIES" ]
+#then
+	# Do nothing. Module doesn't have any dependencies.
+#fi
 
 if [ -z "$OUTPUT_FILE" ]
 then
@@ -131,10 +140,28 @@ done
 
 echo "</resources>" >> $RESOURCES_XML
 
+DEPENDENCIES_XML="./dependencies.xml"
+
+#Create dependencies.xml which will hold the dependency-names we need to add to "module.xml"
+echo "<?xml version=\"1.0\"?>" > $DEPENDENCIES_XML
+echo "<dependencies xmlns=\"urn:jboss:ddoyle:dependencies:1.0\">" >> $DEPENDENCIES_XML
+
+# The 'basename' command is used to strip the pathname from the result of 'ls', so only the filename is shown.
+DEPENDENCIES_ARRAY=$(echo $MODULE_DEPENDENCIES | tr "," "\n")
+
+for x in $DEPENDENCIES_ARRAY
+do
+	echo "    <module name=\"$x\"/>" >> $DEPENDENCIES_XML
+done
+
+echo "</dependencies>" >> $DEPENDENCIES_XML
+
+
 xsltproc --stringparam moduleName $MODULE_NAME -o $MODULE_XML jboss-module.xslt $MODULE_XML
 xmllint --format -o $MODULE_XML $MODULE_XML
 
 rm $RESOURCES_XML
+rm $DEPENDENCIES_XML
 
 mv $MODULE_XML $MODULE_RESOURCE_PATH
 
