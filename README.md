@@ -43,6 +43,20 @@ This script accepts 4 parameters:
 - -l: The name of the layer in which the module should be installed.
 - -e: The *enabled* boolean which defines whether the (new) layer should be enabled or not in the platforms *layers.conf* configuration file.
 
+build-jboss-module/build-jboss-module.sh
+-----------------------------------------------
+Script that builds a JBoss Module. The resources are defined in a Maven POM and are thus downloaded via Maven. Module path, name and slot are configurable.
+The module is created as a ZIP file, and by default stored as *module.zip* (however, the output file is configurable).
+
+ATM, the module-dependencies of the module are not yet configurable, they're statically defined in the module.xml.template file (this will be addressed in a future version).
+
+This script accepts 5 parameters:
+- -f: The Maven POM file that defines the resources.
+- -p: The module path (e.g. *org.spring*). This defines the module's directory structure.
+- -n: The name of the module. This is used in the *<module>* element of the *module.xml* file.
+- -s: The module's slot. The default value is *main*.
+- -o: The output ZIP file. The default value is *module.zip*.
+
 createJGroupsKeystore.sh
 ------------------------
 Simple *keytool* command that creates a keystore for the JGroups ENCRYPT protocol (see the 09\_configureJGroups.cli script).
