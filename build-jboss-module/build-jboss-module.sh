@@ -102,7 +102,8 @@ MODULE_RESOURCE_PATH=$MODULE_BUILD_PATH/$MODULE_PATH/$MODULE_SLOT/
 
 ################################################ Retrieve Dependencies  #############################################
 echo -e "Running Maven to download dependencies defined in the pom.xml. These dependencies define the content of the module.\n"
-mvn -f $POM_FILE clean dependency:copy-dependencies -DexcludeTransitive
+PWD=$(pwd -P)
+mvn -f $POM_FILE clean dependency:copy-dependencies -DexcludeTransitive -DoutputDirectory="$PWD/target/dependency"
 
 ################################################ Copy Dependencies to module directory  #############################################
 echo -e "\nBuilding the layer and module.\n"
