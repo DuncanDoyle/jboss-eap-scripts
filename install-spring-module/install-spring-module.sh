@@ -16,7 +16,7 @@ function usage {
       echo "where args include:"
       echo "    -j              JBoss installation directory."
       echo "    -l              Name of the layer in which to install the module. Default is 'base'."
-      echo "    -e              Enabled (truef/false) defines whether the layer should be enabled."
+      echo "    -e              Enabled (true/false) defines whether the layer should be enabled."
 }
 
 #Parse the params
