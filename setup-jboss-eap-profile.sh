@@ -19,11 +19,12 @@ function usage {
       echo "	-s		JBoss source configuration profile."
       echo "	-t		JBoss target configuration profile."
       echo "	-j		JBoss installation directory."
+      echo "    -b 		JBoss base dir."
       echo "	-c		CLI scripst directory."
 }
 
 #Parse the params
-while getopts ":s:t:j:c:h" opt; do
+while getopts ":s:t:j:b:c:h" opt; do
   case $opt in
     s)
       SOURCE_PROFILE=$OPTARG
@@ -33,6 +34,9 @@ while getopts ":s:t:j:c:h" opt; do
       ;;
     j)
       JBOSS_INSTALLATION_DIR=$OPTARG
+      ;;
+    b)
+      JBOSS_BASE_DIR=$OPTARG
       ;;
     c)
       CLI_SCRIPTS_DIR=$OPTARG 
@@ -83,6 +87,13 @@ STARTUP_WAIT=30
 # This is just a setup-script. We don't need an extensive console-log.
 JBOSS_CONSOLE_LOG=jboss-setup-console.log
 
+if [ -z "$JBOSS_BASE_DIR" ]
+then
+  JBOSS_SERVER_LOG=$JBOSS_INSTALLATION_DIR/standalone/log/server.log
+else
+  JBOSS_SERVER_LOG=$JBOSS_BASE_DIR/log/server.log
+fi
+
 echo "Source profile $SOURCE_PROFILE"
 echo "Target profile $TARGET_PROFILE"
 echo "JBoss installation directory: $JBOSS_INSTALLATION_DIR"
@@ -90,21 +101,42 @@ echo "CLI scripts directory: $CLI_SCRIPTS_DIR"
 
 #Copy the source profile to target profile.
 echo "Copying $SOURCE_PROFILE profile to $TARGET_PROFILE."
-cp $JBOSS_INSTALLATION_DIR/standalone/configuration/$SOURCE_PROFILE $JBOSS_INSTALLATION_DIR/standalone/configuration/$TARGET_PROFILE
+
+if [ -z "$JBOSS_BASE_DIR" ]
+then
+  cp $JBOSS_INSTALLATION_DIR/standalone/configuration/$SOURCE_PROFILE $JBOSS_INSTALLATION_DIR/standalone/configuration/$TARGET_PROFILE
+else 
+  cp $JBOSS_BASE_DIR/configuration/$SOURCE_PROFILE $JBOSS_BASE_DIR/configuration/$TARGET_PROFILE
+fi
 
 # Start EAP in admin-only mode with the target profile
 # Note that we're not checking whether a process is already running.
 #TODO: Add functionality to start JBoss EAP using the daemon function in RHEL/Linux.
 echo "Starting JBoss EAP in 'admin-only' mode."
-$JBOSS_INSTALLATION_DIR/bin/standalone.sh -c $TARGET_PROFILE --admin-only 2>&1 > $JBOSS_CONSOLE_LOG &
+
+if [ -z "$JBOSS_BASE_DIR" ]
+then
+  $JBOSS_INSTALLATION_DIR/bin/standalone.sh -c $TARGET_PROFILE --admin-only 2>&1 > $JBOSS_CONSOLE_LOG &
+else 
+  $JBOSS_INSTALLATION_DIR/bin/standalone.sh -c $TARGET_PROFILE -Djboss.server.base.dir=$JBOSS_BASE_DIR --admin-only 2>&1 > $JBOSS_CONSOLE_LOG &
+fi
 
 # Some wait code. Wait till the system is ready. Basically copied from the EAP .sh scripts.
 count=0
 launched=false
 
+#Backup the old server.log
+if [ -f "$JBOSS_SERVER_LOG" ]
+then
+	now=$(date +"%Y-%m-%d-%S")
+	mv $JBOSS_SERVER_LOG $JBOSS_SERVER_LOG.$now
+	touch $JBOSS_SERVER_LOG
+fi
+
 until [ $count -gt $STARTUP_WAIT ]
   do
-    grep 'JBAS015874:' $JBOSS_CONSOLE_LOG > /dev/null
+#    grep 'JBAS015874:' $JBOSS_CONSOLE_LOG > /dev/null
+    grep 'JBAS015874:' $JBOSS_SERVER_LOG > /dev/null
     if [ $? -eq 0 ] ; then
       launched=true
       break
