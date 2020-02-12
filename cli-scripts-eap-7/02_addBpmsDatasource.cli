@@ -1,0 +1,10 @@
+# jBPM6 / BPMSuite 6.0.2 datasource
+batch
+/subsystem=datasources/data-source=ExampleDS:remove
+/subsystem=datasources/xa-data-source=ExampleDS:add(jndi-name=java:jboss/datasources/ExampleDS, driver-name=postgresql, user-name=postgres, password=postgres)
+/subsystem=datasources/xa-data-source=ExampleDS/xa-datasource-properties=ServerName:add(value=localhost)
+/subsystem=datasources/xa-data-source=ExampleDS/xa-datasource-properties=PortNumber:add(value=5432)
+/subsystem=datasources/xa-data-source=ExampleDS/xa-datasource-properties=DatabaseName:add(value=kie-server-filtered-advanced-queries-7)
+#/subsystem=datasources/xa-data-source=ExampleDS:enable(persistent=true)
+/subsystem=datasources/xa-data-source=ExampleDS:enable
+run-batch

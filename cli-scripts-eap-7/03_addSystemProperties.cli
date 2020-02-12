@@ -1,0 +1,19 @@
+#
+# Configures BPMSuite System properties.
+#
+# author: ddoyle@redhat.com
+#
+#/system-property=org.uberfire.nio.git.dir:add(value="/bpms-data/git")
+#/system-property=kie.maven.settings.custom:add(value="/bpms-data/configuration/kie-settings.xml")
+#/system-property=org.uberfire.nio.git.daemon.host:add(value="0.0.0.0")
+#/system-property=org.uberfire.nio.git.ssh.host:add(value="0.0.0.0")
+/system-property=org.kie.server.persistence.dialect:add(value="org.hibernate.dialect.PostgreSQLDialect")
+/system-property=org.kie.server.id:add(value="default-kieserver")
+#/system-property=org.kie.server.persistence.ds:add(value="java:jboss/datasources/jbpmDS");
+/system-property=org.kie.server.persistence.ds:add(value="java:jboss/datasources/ExampleDS")
+/system-property=org.kie.server.controller:add(value="http://localhost:8080/jbpm-console/rest/controller")
+/system-property=org.kie.server.location:add(value="http://localhost:8080/kie-server/services/rest/server")
+
+
+
+
